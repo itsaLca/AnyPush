@@ -116,7 +116,7 @@ class CustomSMTPServer(smtpd.SMTPServer):
 if __name__ == '__main__':
     host_name = socket.gethostname()
     host_ip = socket.gethostbyname(host_name)
-    listen_at = ('0.0.0.0', 2525)
+    listen_at = ('0.0.0.0', 25)
     server = CustomSMTPServer(listen_at, None)
     logger.info("Hostname: %s" % host_name)
     logger.info("IP: %s" % host_ip)
