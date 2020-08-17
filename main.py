@@ -99,7 +99,7 @@ class CustomSMTPServer(smtpd.SMTPServer):
         """
         msg = Mail(peer, mailfrom, rcpttos, data, **kwargs)
 
-        data = {
+        sdata = {
             'from': msg.sender,
             'to': msg.to,
             'subject': msg.subject,
@@ -108,7 +108,7 @@ class CustomSMTPServer(smtpd.SMTPServer):
         }
         logger.info('Redirect "%s" to %s' % (msg.subject, msg.to))
         try:
-            requests.post(webhook_url, json=data)
+            requests.post(webhook_url, json=sdata)
         except Exception as e:
             logger.error('Webhook request failed: %r' % e)
 
