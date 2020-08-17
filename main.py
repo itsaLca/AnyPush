@@ -104,7 +104,7 @@ class CustomSMTPServer(smtpd.SMTPServer):
             'to': msg.to,
             'subject': msg.subject,
             'text': msg.text,
-            'raw': data
+            'raw': data.decode('utf-8')
         }
         logger.info('Redirect "%s" to %s' % (msg.subject, msg.to))
         try:
