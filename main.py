@@ -110,7 +110,7 @@ class CustomSMTPServer(smtpd.SMTPServer):
         try:
             ts = calendar.timegm(time.gmtime())
             s3 = boto3.resource('s3')
-            s3.Bucket('smtpd').put_object(Key=ts, Body=data)
+            s3.Bucket('smtpd').put_object(Key=(str(ts) + ".json"), Body=data)
             # requests.post(webhook_url, json=sdata)
         except Exception as e:
             logger.error('Webhook request failed: %r' % e)
