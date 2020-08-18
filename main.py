@@ -19,7 +19,6 @@ from util import env_conf
 
 logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 logger = logging.getLogger('AnyPush')
-webhook_url = env_conf('WEBHOOK_URL', 'SMTP to Webhook', str)
 default_charset = 'ASCII'
 
 class Mail:
