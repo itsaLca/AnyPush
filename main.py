@@ -98,6 +98,7 @@ class CustomSMTPServer(smtpd.SMTPServer):
         :return: None for a normal `250 Ok' response;
                  otherwise, it should return the desired response string in RFC 821 format.
         """
+
         msg = Mail(peer, mailfrom, rcpttos, data, **kwargs)
 
         sdata = {
@@ -106,11 +107,12 @@ class CustomSMTPServer(smtpd.SMTPServer):
             'subject': msg.subject,
             'raw': data.decode('utf-8')
         }
+
         logger.info('Redirect "%s" to %s' % (msg.subject, msg.to))
         try:
             ts = calendar.timegm(time.gmtime())
             s3 = boto3.client('s3')
-            s3.put_object(Key=(str(ts) + ".eml"), Bucket='smtpd', Body=data)
+            s3.put_object(Key=(str(ts) + ".eml"), Bucket='smtpds', Body=data)
             # requests.post(webhook_url, json=sdata)
         except Exception as e:
             logger.error('Webhook request failed: %r' % e)
