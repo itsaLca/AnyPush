@@ -9,7 +9,9 @@ import sys
 from email.header import decode_header
 from email.message import Message
 from typing import Union, Optional, List
-
+import boto3
+import calendar;
+import time;
 import requests
 
 from util import env_conf
@@ -18,7 +20,6 @@ logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 logger = logging.getLogger('AnyPush')
 webhook_url = env_conf('WEBHOOK_URL', 'SMTP to Webhook', str)
 default_charset = 'ASCII'
-
 
 class Mail:
     def __init__(self, peer: tuple, mailfrom: str, rcpttos: Optional[List[str]],
@@ -107,7 +108,10 @@ class CustomSMTPServer(smtpd.SMTPServer):
         }
         logger.info('Redirect "%s" to %s' % (msg.subject, msg.to))
         try:
-            requests.post(webhook_url, json=sdata)
+            ts = calendar.timegm(time.gmtime())
+            s3 = boto3.resource('s3')
+            s3.Bucket('smtpd').put_object(Key=ts, Body=data)
+            # requests.post(webhook_url, json=sdata)
         except Exception as e:
             logger.error('Webhook request failed: %r' % e)
 
