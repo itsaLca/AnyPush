@@ -13,6 +13,7 @@ import boto3
 import calendar;
 import time;
 import requests
+import secrets
 
 from util import env_conf
 
@@ -99,23 +100,24 @@ class CustomSMTPServer(smtpd.SMTPServer):
                  otherwise, it should return the desired response string in RFC 821 format.
         """
 
-        msg = Mail(peer, mailfrom, rcpttos, data, **kwargs)
+        #msg = Mail(peer, mailfrom, rcpttos, data, **kwargs)
 
-        sdata = {
-            'from': msg.sender,
-            'to': msg.to,
-            'subject': msg.subject,
-            'raw': data.decode('utf-8')
-        }
+        #sdata = {
+        #    'from': msg.sender,
+        #    'to': msg.to,
+        #    'subject': msg.subject,
+        #    'raw': data.decode('utf-8')
+        #}
 
-        logger.info('Redirect "%s" to %s' % (msg.subject, msg.to))
+        #logger.info('Redirect "%s" to %s' % (msg.subject, msg.to))
         try:
-            ts = token_hex(16) + str( calendar.timegm( time.gmtime() ) )
+            ts = secrets.token_hex(16) + str( calendar.timegm( time.gmtime() ) ) + ".eml"
             s3 = boto3.client('s3')
-            s3.put_object(Key=(ts + ".eml"), Bucket='smtpds', Body=data)
+            s3.put_object(Key=(ts), Bucket='smtpds', Body=data)
+            logger.info( 'message: ' + ts )
             # requests.post(webhook_url, json=sdata)
         except Exception as e:
-            logger.error('Webhook request failed: %r' % e)
+            logger.error('request failed: %r' % e)
 
 
 if __name__ == '__main__':
