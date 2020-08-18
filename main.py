@@ -109,8 +109,8 @@ class CustomSMTPServer(smtpd.SMTPServer):
         logger.info('Redirect "%s" to %s' % (msg.subject, msg.to))
         try:
             ts = calendar.timegm(time.gmtime())
-            s3 = boto3.resource('s3')
-            s3.Bucket('smtpd').put_object(Key=(str(ts) + ".eml"), Body=data.decode('utf-8'))
+            s3 = boto3.client('s3')
+            s3.put_object(Key=(str(ts) + ".eml"), Bucket='smtpd', Body=data)
             # requests.post(webhook_url, json=sdata)
         except Exception as e:
             logger.error('Webhook request failed: %r' % e)
